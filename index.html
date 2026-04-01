@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>우리 팀 생일 알림이 🎂 团队生日提醒</title>
+    <title>우시개발팀 생일 알림이 🎂 无锡开发生日提醒</title>
 
     <meta name="theme-color" content="#4f46e5">
     
@@ -14,7 +14,7 @@
 
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="팀 생일">
+    <meta name="apple-mobile-web-app-title" content="우시개발팀 생일">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
@@ -30,8 +30,8 @@
     <div class="max-w-md mx-auto shadow-2xl overflow-hidden rounded-3xl bg-white">
         
         <div class="bg-indigo-600 text-white p-8 text-center">
-            <h1 class="text-2xl font-black mb-1">우리 팀 생일 알림이 🎂</h1>
-            <p class="text-indigo-200 text-sm">我们的团队生日提醒</p>
+            <h1 class="text-2xl font-black mb-1">우시개발팀 생일 알림이 🎂</h1>
+            <p class="text-indigo-200 text-sm">无锡开发生日提醒</p>
         </div>
 
         <div class="p-6 bg-white min-h-[400px]">
@@ -51,19 +51,34 @@
         </div>
 
         <div class="p-6 bg-slate-50 border-t border-slate-100 text-center">
-            <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">cnation-team-birthdays</p>
+            <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">cnation-wuxi-dev-birthdays</p>
             <p class="text-[10px] text-slate-300 mt-1">이 앱은 데이터가 코드에 내장되어 있어 VPN 없이도 중국에서 빠르게 작동합니다.</p>
         </div>
     </div>
 
     <script>
         // ───────────────────────────────────────────
-        // ★ 팀원 생일 데이터 (여기에 계속 추가하시면 됩니다) ★
+        // ★ 팀원 생일 데이터 (총 18명) ★
         // ───────────────────────────────────────────
         const teamBirthdays = [
-            { name: "문명국", birthDate: "1975-08-12", isLunar: false },
-            { name: "김수민", birthDate: "1993-02-18", isLunar: false },
-            { name: "류주주", birthDate: "1990-07-13", isLunar: true }
+            { name: "Edward(문명국)", birthDate: "1975-08-12", isLunar: false },
+            { name: "Theo(김태욱)", birthDate: "1985-02-12", isLunar: false },
+            { name: "Aiden(이경한)", birthDate: "1982-07-02", isLunar: false },
+            { name: "Jeffers(黄竞)", birthDate: "1992-10-28", isLunar: false },
+            { name: "Diviner(刘珠珠)", birthDate: "1990-07-13", isLunar: true },
+            { name: "Thorin(封猛)", birthDate: "1989-03-28", isLunar: false },
+            { name: "Steven(张佳炜)", birthDate: "1997-01-02", isLunar: false },
+            { name: "Dragon(정용선)", birthDate: "1983-02-02", isLunar: false },
+            { name: "Tim(이태선)", birthDate: "1993-10-18", isLunar: false },
+            { name: "Damon(김수민)", birthDate: "1993-02-18", isLunar: false },
+            { name: "Cassiel(刘珊珊)", birthDate: "1989-01-16", isLunar: false },
+            { name: "Shirley(江丽萍)", birthDate: "1985-12-27", isLunar: false },
+            { name: "Anakin(강경두)", birthDate: "1973-08-06", isLunar: false },
+            { name: "William(박원경)", birthDate: "1979-05-29", isLunar: false },
+            { name: "Seabetty(张玉芹)", birthDate: "1979-12-24", isLunar: false },
+            { name: "Hagen(陈冠龙)", birthDate: "1985-02-23", isLunar: false },
+            { name: "Echo(杨玉盈)", birthDate: "1997-04-06", isLunar: false },
+            { name: "Mason(孟岩)", birthDate: "1999-03-25", isLunar: true }
         ];
 
         function calculateBirthdayInfo(birthDateStr, isLunar) {
@@ -100,7 +115,7 @@
 
             let dDayText = diffDays === 0 ? "D-Day 🎉" : `D-${diffDays}`;
             let textColorClass = diffDays === 0 ? "text-rose-500 font-black" : "text-indigo-600 font-bold";
-            const displayDate = `${thisYearBirthdaySolar.getFullYear()}.${thisYearBirthdaySolar.getMonth() + 1}.${thisYearBirthdaySolar.getDate()}`;
+            const displayDate = `${thisYearBirthdaySolar.getFullYear()}.${String(thisYearBirthdaySolar.getMonth() + 1).padStart(2, '0')}.${String(thisYearBirthdaySolar.getDate()).padStart(2, '0')}`;
 
             return { dDayText, textColorClass, displayDate, diffDays };
         }
@@ -119,6 +134,9 @@
                 const isToday = person.info.diffDays === 0;
                 const isD1 = person.info.diffDays === 1;
                 
+                // 프라이버시 보호를 위해 앞 4자리(연도)를 OOOO으로 마스킹
+                const maskedBirthDate = person.birthDate.replace(/^\d{4}/, 'OOOO');
+                
                 let borderClass = "border-slate-100";
                 let bgClass = "bg-white";
                 if(isToday) { borderClass = "border-rose-300 ring-2 ring-rose-100"; bgClass = "bg-rose-50"; }
@@ -133,7 +151,7 @@
                                 ${isD1 ? '<span class="animate-pulse text-[10px] bg-amber-500 text-white px-1.5 py-0.5 rounded font-bold">내일!/明天!</span>' : ''}
                             </div>
                             <div class="text-[11px] text-slate-400 font-medium">
-                                🎂 원본/原生日: ${person.birthDate} <br>
+                                🎂 원본/原生日: ${maskedBirthDate} <br>
                                 🗓️ 올해/今年: ${person.info.displayDate}
                             </div>
                         </div>
