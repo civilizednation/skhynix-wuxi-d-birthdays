@@ -6,254 +6,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>우리 팀 생일 알림이 🎂 团队生日提醒</title>
 
-    <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#ff6b6b">
+    <meta name="theme-color" content="#4f46e5">
+    
     <link rel="icon" type="image/x-icon" href="./favicon.ico">
-    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="./android-chrome-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="./android-chrome-512x512.png">
 
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="팀 생일 알림">
+    <meta name="apple-mobile-web-app-title" content="팀 생일">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
 
     <style>
-        /* 알림 배너 스타일 */
-        #notificationBanner {
-            display: none;
-            position: fixed;
-            bottom: 1rem;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 9999;
-            width: calc(100% - 2rem);
-            max-width: 28rem;
-        }
-        .text-zh { font-size: 0.85em; opacity: 0.8; margin-top: 2px; display: block; }
+        .text-zh { font-size: 0.8em; opacity: 0.8; display: block; margin-top: 1px; }
+        .birthday-card { transition: all 0.3s ease; }
     </style>
 </head>
 
-<body class="bg-indigo-50 min-h-screen p-4 font-sans text-gray-800">
+<body class="bg-slate-50 min-h-screen p-4 font-sans text-slate-800">
 
-    <div id="notificationBanner" class="bg-yellow-50 border border-yellow-300 rounded-2xl shadow-lg p-4">
-        <div class="flex items-start gap-3">
-            <span class="text-2xl">🔔</span>
-            <div class="flex-1">
-                <p class="font-bold text-gray-800 text-sm">
-                    생일 하루 전 알림 받기
-                    <span class="text-zh font-normal">生日前一天接收通知</span>
-                </p>
-                <p class="text-xs text-gray-500 mt-2">
-                    생일 전날 오전 8시에 알림을 드려요.<br>
-                    <span class="text-zh">生日前一天上午8点给您发送提醒。</span>
-                </p>
-                <div class="flex gap-2 mt-4">
-                    <button id="allowNotifBtn"
-                        class="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold py-2 px-3 rounded-lg transition flex flex-col items-center">
-                        <span>알림 허용하기 ✅</span>
-                        <span class="text-[10px] font-normal opacity-80">允许通知</span>
-                    </button>
-                    <button id="dismissNotifBtn"
-                        class="flex-1 text-gray-500 hover:text-gray-700 bg-white border border-gray-300 text-sm py-2 px-3 rounded-lg transition flex flex-col items-center">
-                        <span>나중에</span>
-                        <span class="text-[10px] font-normal opacity-80">以后再说</span>
-                    </button>
+    <div class="max-w-md mx-auto shadow-2xl overflow-hidden rounded-3xl bg-white">
+        
+        <div class="bg-indigo-600 text-white p-8 text-center">
+            <h1 class="text-2xl font-black mb-1">우리 팀 생일 알림이 🎂</h1>
+            <p class="text-indigo-200 text-sm">我们的团队生日提醒</p>
+        </div>
+
+        <div class="p-6 bg-white min-h-[400px]">
+            <div class="flex justify-between items-end mb-6 border-b-2 border-slate-100 pb-3">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">다가오는 생일 목록</h2>
+                    <span class="text-xs text-slate-400">即将到来的生日</span>
+                </div>
+                <div class="text-right">
+                    <span id="totalCount" class="text-indigo-600 font-black text-lg">0</span>
+                    <span class="text-xs text-slate-400">명/人</span>
                 </div>
             </div>
+            
+            <div id="birthdayList" class="space-y-4">
+                </div>
+        </div>
+
+        <div class="p-6 bg-slate-50 border-t border-slate-100 text-center">
+            <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">cnation-team-birthdays</p>
+            <p class="text-[10px] text-slate-300 mt-1">이 앱은 데이터가 코드에 내장되어 있어 VPN 없이도 중국에서 빠르게 작동합니다.</p>
         </div>
     </div>
 
-    <div class="max-w-md mx-auto shadow-lg overflow-hidden rounded-2xl">
-        
-        <div class="bg-indigo-600 text-white p-6 text-center rounded-t-2xl">
-            <h1 class="text-2xl font-bold mb-1">우리 팀 생일 알림이 🎂</h1>
-            <p class="text-indigo-200 text-sm mb-2">我们的团队生日提醒</p>
-            <p class="text-indigo-100 text-xs bg-indigo-700/50 inline-block px-3 py-1 rounded-full">cnation-team-birthdays</p>
-            
-            <div id="notifStatus" class="mt-4 text-xs text-green-300 bg-green-900/30 py-1.5 px-3 rounded-lg inline-block hidden">
-                🔔 알림 설정 완료 (已开启通知)
-            </div>
-        </div>
-
-        <div class="p-5 bg-gray-50 min-h-[300px]">
-            <div class="flex justify-between items-end mb-4 border-b border-gray-200 pb-2">
-                <div>
-                    <h2 class="text-lg font-extrabold text-gray-800">다가오는 생일 목록</h2>
-                    <span class="text-xs text-gray-500">即将到来的生日</span>
-                </div>
-            </div>
-            
-            <div id="birthdayList" class="space-y-3">
-                <p class="text-center text-gray-400 text-sm py-10 flex flex-col items-center gap-2">
-                    <i class="fas fa-spinner fa-spin text-xl"></i>
-                    <span>데이터를 불러오는 중입니다...<br><span class="text-xs">正在加载数据...</span></span>
-                </p>
-            </div>
-        </div>
-
-        <div class="p-6 bg-white border-t border-gray-200 rounded-b-2xl">
-            <div class="mb-4">
-                <h2 class="text-sm font-bold text-indigo-600">새 팀원 추가하기</h2>
-                <span class="text-xs text-gray-500">添加新团队成员</span>
-            </div>
-            
-            <div class="flex flex-col space-y-4">
-                <div>
-                    <input type="text" id="nameInput" placeholder="이름 / 姓名"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent text-sm transition">
-                </div>
-
-                <div class="flex space-x-2 items-center">
-                    <input type="date" id="dateInput"
-                        class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm transition text-gray-600">
-                    
-                    <label class="flex items-center space-x-2 text-sm font-bold text-gray-600 bg-indigo-50 border border-indigo-100 px-4 py-3 rounded-xl cursor-pointer hover:bg-indigo-100 transition shrink-0">
-                        <input type="checkbox" id="isLunar" class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
-                        <div class="flex flex-col leading-tight">
-                            <span>음력</span>
-                            <span class="text-[10px] font-normal text-gray-500">农历</span>
-                        </div>
-                    </label>
-                </div>
-
-                <button id="addBtn"
-                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-4 rounded-xl transition duration-200 shadow-md flex flex-col items-center justify-center gap-0.5 mt-2">
-                    <span class="text-base">등록하기 ➕</span>
-                    <span class="text-[11px] font-normal opacity-80">添加</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        // Firebase 설정 (기존 키 사용)
-        const firebaseConfig = {
-            apiKey: "AIzaSyCTwOAC_LrrKH8CKepUOTf0pyd9qRv4y_8",
-            authDomain: "cnation-project.firebaseapp.com",
-            projectId: "cnation-project",
-            storageBucket: "cnation-project.firebasestorage.app",
-            messagingSenderId: "1004154104261",
-            appId: "1:1004154104261:web:0eac4c7ded38262ae5c3ac",
-            measurementId: "G-7PW1NSP5EQ"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        
-        // ★ 팀 생일용 새로운 컬렉션 이름 지정 ★
-        const collectionName = "cnation-team-birthdays";
-
+    <script>
         // ───────────────────────────────────────────
-        // Service Worker 등록
+        // ★ 팀원 생일 데이터 (여기에 계속 추가하시면 됩니다) ★
         // ───────────────────────────────────────────
-        async function registerSW() {
-            if (!('serviceWorker' in navigator)) return;
-            try {
-                const reg = await navigator.serviceWorker.register('./sw.js');
-                console.log('[SW] 등록 성공:', reg.scope);
-                return reg;
-            } catch (e) {
-                console.error('[SW] 등록 실패:', e);
-            }
-        }
+        const teamBirthdays = [
+            { name: "문명국", birthDate: "1975-08-12", isLunar: false },
+            { name: "김수민", birthDate: "1993-02-18", isLunar: false },
+            { name: "류주주", birthDate: "1990-07-13", isLunar: true }
+        ];
 
-        // ───────────────────────────────────────────
-        // 알림 권한 요청 & 배너 처리
-        // ───────────────────────────────────────────
-        function showNotifBanner() {
-            const banner = document.getElementById('notificationBanner');
-            const dismissed = localStorage.getItem('notifBannerDismissed_team');
-            if (dismissed) return;
-            if (!('Notification' in window)) return;
-            if (Notification.permission === 'granted') {
-                updateNotifStatus(true);
-                return;
-            }
-            if (Notification.permission !== 'denied') {
-                banner.style.display = 'block';
-            }
-        }
-
-        function updateNotifStatus(active) {
-            const el = document.getElementById('notifStatus');
-            if (active) el.classList.remove('hidden');
-            else el.classList.add('hidden');
-        }
-
-        document.getElementById('allowNotifBtn').addEventListener('click', async () => {
-            const permission = await Notification.requestPermission();
-            document.getElementById('notificationBanner').style.display = 'none';
-            if (permission === 'granted') {
-                updateNotifStatus(true);
-                scheduleBirthdayChecks();
-                alert('✅ 알림이 허용되었습니다! (已开启通知)\n생일 하루 전 오전 8시에 알림을 드릴게요.');
-            } else {
-                alert('⚠️ 알림이 거부되었습니다. (通知已被拒绝)\n브라우저/기기 설정에서 알림을 허용해주세요.');
-            }
-        });
-
-        document.getElementById('dismissNotifBtn').addEventListener('click', () => {
-            document.getElementById('notificationBanner').style.display = 'none';
-            localStorage.setItem('notifBannerDismissed_team', '1');
-        });
-
-        function scheduleBirthdayChecks() {
-            if (!('serviceWorker' in navigator) || !navigator.serviceWorker.controller) return;
-            const cached = JSON.parse(localStorage.getItem('teamBirthdayCache') || '[]');
-            navigator.serviceWorker.controller.postMessage({
-                type: 'SCHEDULE_BIRTHDAY_CHECK',
-                birthdays: cached
-            });
-        }
-
-        function checkTomorrowBirthdays(birthdays) {
-            if (Notification.permission !== 'granted') return;
-
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const tomorrow = new Date(today);
-            tomorrow.setDate(today.getDate() + 1);
-
-            birthdays.forEach(({ name, birthDate, isLunar }) => {
-                const info = calculateBirthdayInfo(birthDate, isLunar);
-                if (info.diffDays === 1) {
-                    const now = new Date();
-                    const target = new Date(tomorrow);
-                    target.setHours(8, 0, 0, 0);
-                    const delay = target - now;
-
-                    if (delay > 0) {
-                        const scheduledKey = `notif_team_${name}_${tomorrow.toISOString().split('T')[0]}`;
-                        const alreadyScheduled = localStorage.getItem(scheduledKey);
-                        
-                        if (!alreadyScheduled) {
-                            setTimeout(() => {
-                                new Notification(`🎂 내일은 ${name} 팀원의 생일이에요! (明天是 ${name} 的生日!)`, {
-                                    body: `${info.displayDate} - 축하 인사를 준비해 주세요 🎉`,
-                                    icon: './android-chrome-192x192.png',
-                                    badge: './favicon-32x32.png',
-                                    tag: `team-birthday-${name}`,
-                                    requireInteraction: true
-                                });
-                            }, delay);
-                            localStorage.setItem(scheduledKey, '1');
-                        }
-                    }
-                }
-            });
-        }
-
-        // ───────────────────────────────────────────
-        // 생일 계산 로직
-        // ───────────────────────────────────────────
         function calculateBirthdayInfo(birthDateStr, isLunar) {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
@@ -264,155 +76,77 @@
             let thisYearBirthdaySolar;
 
             if (isLunar) {
-                // 음력 라이브러리 사용
+                // 올해 연도에서 해당 음력 날짜에 대응하는 양력 날짜 찾기
                 const lunarDate = Lunar.fromYmd(currentYear, birthMonth, birthDay);
                 const solarDateObj = lunarDate.getSolar();
                 thisYearBirthdaySolar = new Date(solarDateObj.getYear(), solarDateObj.getMonth() - 1, solarDateObj.getDay());
+                
+                // 만약 올해 음력 생일이 이미 지났다면 내년 날짜로 계산 (목록 정렬을 위해)
+                if (thisYearBirthdaySolar < today) {
+                    const nextLunarDate = Lunar.fromYmd(currentYear + 1, birthMonth, birthDay);
+                    const nextSolarDateObj = nextLunarDate.getSolar();
+                    thisYearBirthdaySolar = new Date(nextSolarDateObj.getYear(), nextSolarDateObj.getMonth() - 1, nextSolarDateObj.getDay());
+                }
             } else {
                 thisYearBirthdaySolar = new Date(currentYear, birthMonth - 1, birthDay);
+                // 양력 생일이 이미 지났다면 내년으로 계산
+                if (thisYearBirthdaySolar < today) {
+                    thisYearBirthdaySolar = new Date(currentYear + 1, birthMonth - 1, birthDay);
+                }
             }
 
             const diffTime = thisYearBirthdaySolar - today;
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-            let dDayText = "";
-            let textColorClass = "";
-            let opacityClass = "opacity-100";
-
-            if (diffDays === 0) {
-                dDayText = "D-Day 🎉";
-                textColorClass = "text-rose-500 font-black";
-            } else if (diffDays > 0) {
-                dDayText = `D-${diffDays}`;
-                textColorClass = "text-indigo-600 font-bold";
-            } else {
-                dDayText = `D+${Math.abs(diffDays)}`;
-                textColorClass = "text-gray-400";
-                opacityClass = "opacity-50 grayscale-[50%]";
-            }
-
+            let dDayText = diffDays === 0 ? "D-Day 🎉" : `D-${diffDays}`;
+            let textColorClass = diffDays === 0 ? "text-rose-500 font-black" : "text-indigo-600 font-bold";
             const displayDate = `${thisYearBirthdaySolar.getFullYear()}.${thisYearBirthdaySolar.getMonth() + 1}.${thisYearBirthdaySolar.getDate()}`;
 
-            return { dDayText, textColorClass, displayDate, diffDays, opacityClass, isPast: diffDays < 0 };
+            return { dDayText, textColorClass, displayDate, diffDays };
         }
 
-        // ───────────────────────────────────────────
-        // Firebase 데이터 등록 및 렌더링
-        // ───────────────────────────────────────────
-        document.getElementById('addBtn').addEventListener('click', async () => {
-            const name = document.getElementById('nameInput').value.trim();
-            const date = document.getElementById('dateInput').value;
-            const isLunar = document.getElementById('isLunar').checked;
-
-            if (!name || !date) {
-                alert('이름과 날짜를 모두 입력해주세요! (请输入姓名和日期!)');
-                return;
-            }
-
-            const btn = document.getElementById('addBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 저장 중...';
-
-            try {
-                await addDoc(collection(db, collectionName), { name, birthDate: date, isLunar });
-                document.getElementById('nameInput').value = '';
-                document.getElementById('dateInput').value = '';
-                document.getElementById('isLunar').checked = false;
-            } catch(e) {
-                alert("저장 실패 (保存失败)");
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<span class="text-base">등록하기 ➕</span><span class="text-[11px] font-normal opacity-80">添加</span>';
-            }
-        });
-
-        onSnapshot(collection(db, collectionName), (snapshot) => {
+        function renderList() {
             const listDiv = document.getElementById('birthdayList');
-            listDiv.innerHTML = '';
+            document.getElementById('totalCount').innerText = teamBirthdays.length;
+            
+            // D-day 순으로 정렬 (가장 가까운 생일이 위로 오게)
+            const sortedData = teamBirthdays.map(person => ({
+                ...person,
+                info: calculateBirthdayInfo(person.birthDate, person.isLunar)
+            })).sort((a, b) => a.info.diffDays - b.info.diffDays);
 
-            if (snapshot.empty) {
-                listDiv.innerHTML = `
-                    <div class="text-center text-gray-400 py-10 bg-white rounded-xl border border-dashed border-gray-300">
-                        <p class="text-sm font-bold mb-1">등록된 팀원이 없습니다.</p>
-                        <p class="text-xs">아래에서 새 팀원을 추가해 주세요.<br>(请在下方添加新团队成员。)</p>
-                    </div>`;
-                return;
-            }
+            listDiv.innerHTML = sortedData.map(person => {
+                const isToday = person.info.diffDays === 0;
+                const isD1 = person.info.diffDays === 1;
+                
+                let borderClass = "border-slate-100";
+                let bgClass = "bg-white";
+                if(isToday) { borderClass = "border-rose-300 ring-2 ring-rose-100"; bgClass = "bg-rose-50"; }
+                else if(isD1) { borderClass = "border-amber-300 ring-2 ring-amber-100"; bgClass = "bg-amber-50"; }
 
-            let birthdays = [];
-            snapshot.forEach((docSnap) => {
-                const data = docSnap.data();
-                const info = calculateBirthdayInfo(data.birthDate, data.isLunar);
-                birthdays.push({ id: docSnap.id, data, info });
-            });
-
-            // localStorage 캐시 갱신 (SW 알림용)
-            const cache = birthdays.map(b => ({ name: b.data.name, birthDate: b.data.birthDate, isLunar: b.data.isLunar }));
-            localStorage.setItem('teamBirthdayCache', JSON.stringify(cache));
-
-            // 내일 생일 확인 및 스케줄링
-            checkTomorrowBirthdays(cache);
-            if (Notification.permission === 'granted') scheduleBirthdayChecks();
-
-            // 정렬 로직 (다가오는 생일 -> 먼 생일 -> 지난 생일)
-            birthdays.sort((a, b) => {
-                const dA = a.info.diffDays, dB = b.info.diffDays;
-                const aUp = dA >= 0, bUp = dB >= 0;
-                if (aUp && bUp) return dA - dB;
-                if (!aUp && !bUp) return dB - dA; // 지난 생일은 과거순
-                return aUp ? -1 : 1;
-            });
-
-            birthdays.forEach(({ id, data, info }) => {
-                const lunarTag = data.isLunar
-                    ? '<span class="text-[10px] font-bold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded ml-2">음력 (农历)</span>'
-                    : '<span class="text-[10px] font-bold bg-gray-100 text-gray-500 px-2 py-0.5 rounded ml-2 border border-gray-200">양력 (阳历)</span>';
-
-                // 내일(D-1) 뱃지
-                const isD1 = info.diffDays === 1;
-                const d1Badge = isD1 ? '<span class="text-[10px] font-bold bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded ml-1 animate-pulse border border-yellow-300">🔔 내일! (明天!)</span>' : '';
-
-                // 지난 생일 처리 (취소선 스타일 등)
-                const pastStyle = info.isPast ? "line-through decoration-gray-300" : "";
-                const borderStyle = isD1 ? 'border-yellow-400 ring-2 ring-yellow-100 bg-yellow-50' : (info.diffDays === 0 ? 'border-rose-300 ring-2 ring-rose-50 bg-rose-50' : 'border-gray-200 bg-white');
-
-                listDiv.innerHTML += `
-                    <div class="p-4 rounded-xl shadow-sm border ${borderStyle} flex justify-between items-center transition-all ${info.opacityClass}">
+                return `
+                    <div class="p-5 rounded-2xl border shadow-sm flex justify-between items-center ${borderClass} ${bgClass} birthday-card">
                         <div class="flex-1">
-                            <div class="flex items-center mb-1.5 flex-wrap gap-1">
-                                <span class="font-extrabold text-gray-800 text-lg ${pastStyle}">${data.name}</span>
-                                ${lunarTag}${d1Badge}
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="font-extrabold text-lg text-slate-800">${person.name}</span>
+                                ${person.isLunar ? '<span class="text-[10px] bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded font-bold">음력/农历</span>' : ''}
+                                ${isD1 ? '<span class="animate-pulse text-[10px] bg-amber-500 text-white px-1.5 py-0.5 rounded font-bold">내일!/明天!</span>' : ''}
                             </div>
-                            <div class="text-[11px] text-gray-500 flex flex-col gap-0.5">
-                                <span><i class="fas fa-birthday-cake text-gray-400 w-4"></i> ${data.birthDate}</span>
-                                <span><i class="fas fa-calendar-check text-indigo-400 w-4"></i> 올해(今年): ${info.displayDate}</span>
+                            <div class="text-[11px] text-slate-400 font-medium">
+                                🎂 원본/原生日: ${person.birthDate} <br>
+                                🗓️ 올해/今年: ${person.info.displayDate}
                             </div>
                         </div>
-                        <div class="flex flex-col items-end justify-center pl-3 border-l border-gray-100 min-w-[70px]">
-                            <span class="text-xl tracking-tight ${info.textColorClass}">${info.dDayText}</span>
-                            ${info.isPast ? '<span class="text-[10px] text-gray-400 mt-1">지남 (已过)</span>' : ''}
-                            <button onclick="deleteBirthday('${id}', '${data.name}')" class="mt-2 text-[10px] text-gray-300 hover:text-red-500 transition-colors px-2 py-1 bg-gray-50 hover:bg-red-50 rounded">삭제 (删除)</button>
+                        <div class="text-right pl-4">
+                            <span class="text-2xl tracking-tighter ${person.info.textColorClass}">${person.info.dDayText}</span>
                         </div>
                     </div>
                 `;
-            });
-        });
+            }).join('');
+        }
 
-        // 전역 함수로 등록 (onclick 호출용)
-        window.deleteBirthday = async (id, name) => {
-            if (confirm(`[${name}] 팀원의 생일 기록을 삭제하시겠습니까?\n(确认删除 ${name} 的生日记录吗?)`)) {
-                await deleteDoc(doc(db, collectionName, id));
-            }
-        };
-
-        // ───────────────────────────────────────────
-        // 초기화
-        // ───────────────────────────────────────────
-        await registerSW();
-        showNotifBanner();
-        if (Notification.permission === 'granted') updateNotifStatus(true);
-        
+        // 앱 실행 시 목록 렌더링
+        renderList();
     </script>
 </body>
-
 </html>
